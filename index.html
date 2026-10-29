@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Luxury Fragrances</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <meta name ="description" content="Perfumes is an online perfume website that offers a variety of beautiful fragrances. It has a simple design where customers can view perfumes, check prices, and order their favorite scents.">
+    <meta name="keywords" content="Perfumes, Luxury Fragrances, Premium Perfumes, Perfume Collection, Online Perfume Store, Long-Lasting Fragrance, Men's Perfumes, Women's Perfumes, Affordable Perfumes, Perfume Shopping,">
+    <meta name="cononical" content="/index.html">
+
+
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    ACHE SE
+    <small>PERFUMES</small>
+  </div>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#collection">Collection</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="cart">
+    🛍 Cart: <span id="cart-count">0</span>
+  </div>
+</header>
+
+<main>
+  <div class="hero" id="home">
+    <div class="hero-text">
+      <p>CRAFTED TO BE REMEMBERED</p>
+      <h1>An Impression That Stays</h1>
+      <p>
+        Discover luxury fragrances crafted to express
+        your personality and leave a lasting impression.
+      </p>
+      <a href="#collection" class="btn">SHOP COLLECTION</a>
+    </div>
+
+    <img
+      src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=700&q=85"
+      alt="Luxury perfume bottle">
+  </div>
+
+  <section id="collection">
+    <p>OUR COLLECTION</p>
+    <h2 class="section-title">Find Your Signature</h2>
+
+    <div class="products" id="products"></div>
+  </section>
+
+  <section id="cart">
+    <h2 class="section-title">Your Shopping Cart</h2>
+    <div id="cart-items">Your cart is empty.</div>
+    <h3>Total: Rs. <span id="total">0</span></h3>
+    <br>
+    <button class="btn" onclick="checkout()">
+      ORDER ON WHATSAPP
+    </button>
+    <button class="btn" onclick="clearCart()">
+      CLEAR CART
+    </button>
+  </section>
+
+  <section id="about">
+    <h2 class="section-title">The Art of Fragrance</h2>
+    <p>
+      ACHE SE celebrates beautiful scents, elegant design
+      and the unforgettable memories that fragrance creates.
+    </p>
+  </section>
+</main>
+
+<footer id="contact">
+  <h2>ACHE SE PERFUMES</h2>
+  <p>Luxury in every drop.</p>
+  <p>Contact us to order your favourite fragrance.</p>
+  <p>© 2026 ACHE SE Perfumes. All rights reserved.</p>
+</footer>
+
+<script>
+const perfumes = [
+  {
+    name: "Oudh Serenity",
+    price: 3500,
+    description: "Warm, woody and timeless.",
+    image: "photo-1594035910387-fea47794261f"
+  },
+  {
+    name: "Floral Whisper",
+    price: 2800,
+    description: "Soft, elegant and feminine.",
+    image: "photo-1541643600914-78b084683601"
+  },
+  {
+    name: "Noir Intense",
+    price: 3200,
+    description: "Bold, spicy and captivating.",
+    image: "photo-1592945403244-b3fbafd7f539"
+  },
+  {
+    name: "Citrus Breeze",
+    price: 2500,
+    description: "Fresh, vibrant and uplifting.",
+    image: "photo-1595425970377-c9703cf48b6d"
+  }
+];
+
+let cart = [];
+
+const productsElement = document.getElementById("products");
+
+perfumes.forEach((perfume, index) => {
+  const card = document.createElement("article");
+  card.className = "product";
+
+  card.innerHTML = `
+    <img
+      src="https://images.unsplash.com/${perfume.image}?auto=format&fit=crop&w=500&q=80"
+      alt="${perfume.name}"
+      loading="lazy">
+    <h3>${perfume.name}</h3>
+    <p>${perfume.description}</p>
+    <p class="price">Rs. ${perfume.price.toLocaleString("en-PK")}</p>
+    <button class="btn" onclick="addToCart(${index})">
+      ADD TO CART
+    </button>
+  `;
+
+  productsElement.appendChild(card);
+});
+
+function addToCart(index) {
+  const perfume = perfumes[index];
+  const existing = cart.find(item => item.name === perfume.name);
+
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({ ...perfume, quantity: 1 });
+  }
+
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById("cart-items");
+  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const total = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity, 0
+  );
+
+  document.getElementById("cart-count").textContent = count;
+  document.getElementById("total").textContent =
+    total.toLocaleString("en-PK");
+
+  if (cart.length === 0) {
+    container.textContent = "Your cart is empty.";
+    return;
+  }
+
+  container.innerHTML = "";
+
+  cart.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "cart-row";
+
+    const info = document.createElement("span");
+    info.textContent =
+      `${item.name} × ${item.quantity} — Rs. ` +
+      (item.price * item.quantity).toLocaleString("en-PK");
+
+    const remove = document.createElement("button");
+    remove.textContent = "Remove";
+    remove.onclick = () => {
+      cart = cart.filter(p => p.name !== item.name);
+      renderCart();
+    };
+
+    row.append(info, remove);
+    container.appendChild(row);
+  });
+}
+
+function clearCart() {
+  cart = [];
+  renderCart();
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert("Please add a perfume to your cart first.");
+    return;
+  }
+
+  // Replace with your WhatsApp number, including country code.
+  const whatsappNumber = "923001234567";
+
+  const order = cart.map(item =>
+    `${item.name} x ${item.quantity} = Rs. ${
+      item.price * item.quantity
+    }`
+  ).join("\n");
+
+  const total = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity, 0
+  );
+
+  const message =
+    `Assalam-o-Alaikum! I want to order from ACHE SE Perfumes:\n` +
+    `${order}\nTotal: Rs. ${total}`;
+
+  const url =
+    "https://wa.me/" + whatsappNumber +
+    "?text=" + encodeURIComponent(message);
+
+  window.open(url, "_blank");
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+    
+</body>
+</html>
